@@ -23,6 +23,7 @@ Or start all dependencies with `docker compose up --build`. Prisma production mi
 
 Required variables: `DATABASE_URL`, `JWT_SECRET` (32+ chars); optional `REDIS_URL`, `PORT`, `JWT_EXPIRES_IN`, `CORS_ORIGINS`, `SWAGGER_ENABLED`. Secrets are never committed; use `.env` or deployment secret management.
 
+
 ## Authentication
 
 Writes require a Bearer JWT with `roles`: `ADMIN` or `CONFIG_MANAGER`. `ADMIN` creates banks; `READ_ONLY` is intentionally read-only. GET routes are currently public for consumer integration; place an API-key guard in front of those routes when a client API-key scheme is introduced.

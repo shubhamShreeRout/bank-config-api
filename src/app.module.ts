@@ -22,6 +22,7 @@ import { HealthModule } from './health/health.module';
         JWT_EXPIRES_IN: Joi.string().default('1h'),
         CORS_ORIGINS: Joi.string().default('*'),
         SWAGGER_ENABLED: Joi.boolean().default(true),
+        DEV_TOKEN_ISSUER_ENABLED: Joi.boolean().default(false),
       }),
     }),
     LoggerModule.forRoot({
