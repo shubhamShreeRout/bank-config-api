@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BankStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ConfigurationStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum HistoryAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+model Bank {
+  id String @id @default(uuid()) @db.Uuid
+  bankCode String @unique @db.VarChar(50)
+  bankName String @db.VarChar(255)
+  status BankStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  configurations ServiceConfiguration[]
+  @@index([bankCode])
+  @@map("banks")
+}
+model ServiceConfiguration {
+  id String @id @default(uuid()) @db.Uuid
+  bankId String @db.Uuid
+  bank Bank @relation(fields:[bankId], references:[id], onDelete:Cascade)
+  serviceName String @db.VarChar(100)
+  config Json @db.JsonB
+  version Int @default(1)
+  status ConfigurationStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  history ConfigurationHistory[]
+  @@unique([bankId,serviceName])
+  @@index([bankId])
+  @@index([serviceName])
+  @@index([bankId,serviceName])
+  @@map("service_configurations")
+}
+model ConfigurationHistory {
+  id String @id @default(uuid()) @db.Uuid
+  configurationId String @db.Uuid
+  configuration ServiceConfiguration @relation(fields:[configurationId],references:[id],onDelete:Cascade)
+  version Int
+  action HistoryAction
+  previousConfig Json? @db.JsonB
+  newConfig Json? @db.JsonB
+  changedBy String? @db.VarChar(255)
+  createdAt DateTime @default(now())
+  @@index([configurationId])
+  @@map("configuration_history")
+}
